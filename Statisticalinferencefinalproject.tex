@@ -24,7 +24,7 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{hyperref}
 \hypersetup{unicode=true,
-            pdftitle={Statistical Inference Simulation Exercise and Data Analysis},
+            pdftitle={Statistical Inference Simulation Exercise},
             pdfauthor={Harland Hendricks},
             pdfborder={0 0 0},
             breaklinks=true}
@@ -114,7 +114,7 @@
 
 \setlength{\droptitle}{-2em}
 
-  \title{Statistical Inference Simulation Exercise and Data Analysis}
+  \title{Statistical Inference Simulation Exercise}
     \pretitle{\vspace{\droptitle}\centering\huge}
   \posttitle{\par}
     \author{Harland Hendricks}
@@ -128,40 +128,131 @@
 \begin{document}
 \maketitle
 
-\subsection{R Markdown}\label{r-markdown}
+The instructions for this assignment are located
+\href{https://www.coursera.org/learn/statistical-inference/peer/3k8j5/statistical-inference-course-project}{here.}
 
-This is an R Markdown document. Markdown is a simple formatting syntax
-for authoring HTML, PDF, and MS Word documents. For more details on
-using R Markdown see \url{http://rmarkdown.rstudio.com}.
+Built with R version `r getRversion()' with the following system:
 
-When you click the \textbf{Knit} button a document will be generated
-that includes both content as well as the output of any embedded R code
-chunks within the document. You can embed an R code chunk like this:
+\begin{verbatim}
+##           sysname           release           version          nodename 
+##         "Windows"          "10 x64"     "build 17134" "DESKTOP-TPCQ5AJ" 
+##           machine             login              user    effective_user 
+##          "x86-64"           "harla"           "harla"           "harla"
+\end{verbatim}
+
+Load the required libraries
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{summary}\NormalTok{(cars)}
+\KeywordTok{library}\NormalTok{(dplyr)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-##      speed           dist       
-##  Min.   : 4.0   Min.   :  2.00  
-##  1st Qu.:12.0   1st Qu.: 26.00  
-##  Median :15.0   Median : 36.00  
-##  Mean   :15.4   Mean   : 42.98  
-##  3rd Qu.:19.0   3rd Qu.: 56.00  
-##  Max.   :25.0   Max.   :120.00
+## 
+## Attaching package: 'dplyr'
 \end{verbatim}
 
-\subsection{Including Plots}\label{including-plots}
+\begin{verbatim}
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+\end{verbatim}
 
-You can also embed plots, for example:
+\begin{verbatim}
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+\end{verbatim}
 
-\includegraphics{Statisticalinferencefinalproject_files/figure-latex/pressure-1.pdf}
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(ggplot2)}
+\end{Highlighting}
+\end{Shaded}
 
-Note that the \texttt{echo\ =\ FALSE} parameter was added to the code
-chunk to prevent printing of the R code that generated the plot.
+\subsection{Comparing R's Exponential Distribution and the Central Limit
+Theorem}\label{comparing-rs-exponential-distribution-and-the-central-limit-theorem}
+
+\subsubsection{Simulation}\label{simulation}
+
+For our experiment we will use \[{\lambda} = 0.2\] and run 1000
+simulations for the Exponential Distribution and store the results in an
+object named ed, this represents the Law of Large Numbers distribution
+that can demonstrate the Central Limit Theorem.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1234}\NormalTok{)}
+\NormalTok{n <-}\StringTok{ }\DecValTok{1000}
+\NormalTok{l <-}\StringTok{ }\FloatTok{0.2}
+\NormalTok{ed <-}\StringTok{ }\KeywordTok{rexp}\NormalTok{(n, l)}
+\end{Highlighting}
+\end{Shaded}
+
+We will also run 1000 simulations to sample the mean of 40 observation
+from the Exponential Distribution and store this result in the object
+named mns.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1234}\NormalTok{)}
+\NormalTok{mns =}\StringTok{ }\OtherTok{NULL}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1} \OperatorTok{:}\StringTok{ }\DecValTok{1000}\NormalTok{) mns <-}\StringTok{ }\KeywordTok{c}\NormalTok{(mns, }\KeywordTok{mean}\NormalTok{(}\KeywordTok{rexp}\NormalTok{(}\DecValTok{40}\NormalTok{)))}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Sample Mean vs Theoretical
+Mean}\label{sample-mean-vs-theoretical-mean}
+
+We know that the theoretical mean of the Exponential Distribution is
+\[1/{\lambda}\] We can calcualte the theoretical mean and compare it to
+the mean of the 1000 observations in the Exponential Distribution stored
+in object ed:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{##Theoretical Mean}
+\NormalTok{tm <-}\StringTok{ }\DecValTok{1}\OperatorTok{/}\NormalTok{l}
+\NormalTok{##Expenetial Distribution Mean from 1000 observations}
+\NormalTok{meaned <-}\StringTok{ }\KeywordTok{mean}\NormalTok{(ed)}
+\KeywordTok{print}\NormalTok{(}\KeywordTok{c}\NormalTok{(tm, meaned))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 5.000000 5.003067
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{##Difference in means}
+\NormalTok{tm}\OperatorTok{-}\NormalTok{meaned}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] -0.003066873
+\end{verbatim}
+
+We can also take the mean of the Eponential Distribution we stored in
+object ed:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{mean}\NormalTok{(ed)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 5.003067
+\end{verbatim}
+
+\subsubsection{Sample Variance vs Theoretical
+Variance}\label{sample-variance-vs-theoretical-variance}
+
+We know that the theoretical standard deviation of the Exponential
+Distribution is \[1/{\lambda}\] \#\#\# Distribution
 
 
 \end{document}
