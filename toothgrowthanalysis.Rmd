@@ -24,6 +24,7 @@ Load the required libraries
 ```{r}
 library(dplyr)
 library(ggplot2)
+library(gridExtra)
 ```
 
 ## Analysis of ToothGrowth supp / dose
@@ -37,148 +38,92 @@ data("ToothGrowth")
 dat <- ToothGrowth
 ```
 
-Summary and Structure of dat
+### Structure and summary of dat
+
+*Note: Use ?ToothGrowth to find information on the dataset.* 
 
 ```{r}
-summary(dat)
 str(dat)
+summary(dat)
 ```
 
-We will also run 1000 simulations to sample the variance of 40 observation from the Exponential Distribution
-and store this result in the object named vars.
+### Exploratory Data Analysis
+
+```{r fig.cap = "Comparison of Orange Juice and Ascorbic Acid on Tooth Growth Overall and by Doses"}
+supplen <- ggplot(dat, aes(x = supp, y = len)) + geom_boxplot()
+doselen <- ggplot(dat, aes(x = interaction(supp, dose), y = len)) + geom_boxplot()
+grid.arrange(supplen, doselen, ncol = 2)
+```
+
+Figure 1 shows that Orange Juice may have increased tooth growth overall.  The 1mg/day doseage 
+shows a significant increase, which we will test.
+
+### Test of overall effect of Orange Juice and Ascorbic Acid on Tooth Growth
+
+We test the null hypothesis that VC and OJ have a difference in means of 0:
 
 ```{r}
-set.seed(1234)
-vars = NULL
-for (i in 1 : 1000) vars <- c(vars, sd(rexp(40, l))^2)
+##Group data by OJ and VC
+datoj <- filter(dat, supp == "OJ")
+datvc <- filter(dat, supp == "VC")
+##Run t-test
+t.test(datoj$len - datvc$len, mu = 0, paired = FALSE, alternative = "two.sided", conf.level = 0.95)
 ```
 
-### Sample Mean vs Theoretical Mean
+The results of the test indicate that we must reject the null hyopothesis due to the 
+significance of OJ on tooth growth compared to VC.
 
-We know that the theoretical mean of the Exponential Distribution is $$1/{\lambda}$$
-We can calcualte the theoretical mean and compare it to the mean of the 1000 observations 
-in the Exponential Distribution stored in object ed:
+### Test 0.5 and 1.0 mg/day doseage to see which one is more significant.
+
+Since we determined that OJ significantly affects tooth growth, we now want to 
+test doseage levels.  The 2 mg/day doseage looks like there is no effect, so we will
+test that first to confirm there is no significance:
 
 ```{r}
-##Theoretical Mean
-tm <- 1/l
-print(tm)
-##Expenetial Distribution Mean from 1000 observations
-meaned <- mean(ed)
-print(meaned)
-##Difference in means
-tm-meaned
+##Group data by doseage
+datojd1 <- filter(datoj, dose == 0.5)
+datojd2 <- filter(datoj, dose == 1)
+datojd3 <- filter(datoj, dose == 2)
+datvcd1 <- filter(datvc, dose == 0.5)
+datvcd2 <- filter(datvc, dose == 1)
+datvcd3 <- filter(datvc, dose == 2)
+##Run t.test on doseage of 2 mg/day
+t.test(datojd3$len - datvcd3$len, mu = 0, paired = FALSE, alternative = "two.sided", conf.level = 0.95)
 ```
 
-These means are close when looking at 1000 observations, but what if we compare the mean 
-from a sample of only 40 observations from the Exponential Distribution that was 
-simulated 1000 times and stored in the object mns to the theoretical mean and compare 
-the difference of means to the previous calculation?
+This test indicates that there is not enough evidence to reject the null hypothesis, 
+therefore the difference in means is 0.
+
+Test of doseage 0.5 mg/day:
 
 ```{r}
-##Mean from sample of 40 observations from Exponential Distribution simulated 1000 times
-meanmns <- mean(mns)
-print(meanmns)
-##Difference from theoretical
-tm - meanmns
+t.test(datojd1$len - datvcd1$len, mu = 0, paired = FALSE, alternative = "two.sided", conf.level = 0.95)
 ```
 
-The result is a little larger, but still pretty close.  Figure one displays the Eponential 
-Distribution and means.
-
-```{r, fig.cap = "Figure One - Theoretical, 1000 observations, and 40 observations Means for Exponential Distribution"}
-hist(ed, breaks = 200, main = "Mean Comparisons", xlab = "Exponential Distribution Observation 
-     Zoomed in Around Mean", xlim = 4.5:5.5)
-abline(v = tm, col = "black")
-abline(v = meaned, col = "blue")
-abline(v = meanmns, col = "red")
-legend("topright", legend = c("Theoretical", "1000 Obs", "40 Obs"), fill = c("black", "blue", "red"))
-```
-
-### Sample Variance vs Theoretical Variance
-
-We know that the theoretical standard deviation of the Exponential Distribution is $$1/{\lambda}$$
-and that variance is $$\sigma^2$$
-We can calcualte the theoretical variance and compare it to the variance of the 1000 observations 
-in the Exponential Distribution stored in object ed:
+Test of doseage 1 mg/day:
 
 ```{r}
-##Theoretical variance
-tv <- (1/l)^2
-print(tv)
-##Expenetial Distribution variance from 1000 observations
-vared <- sd(ed)^2
-print(vared)
-##Difference in means
-tv-vared
+t.test(datojd2$len - datvcd2$len, mu = 0, paired = FALSE, alternative = "two.sided", conf.level = 0.95)
 ```
 
-These variances are close when looking at 1000 observations, but what if we compare the variance 
-from a sample of only 40 and observations from the Exponential Distribution that was 
-simulated 1000 times and stored in the object mns to the theoretical variance and compare 
-the difference of variances to the previous calculation?
+Both these test show that OJ significantly improved tooth growth.  The null hypothesis 
+that the difference in means between OJ and VC is 0 should be rejected.
 
-```{r}
-##Mean of variances from sample of 40 observations from Exponential Distribution simulated 1000 times
-varmns <- mean(vars)
-print(varmns)
-##Difference from theoretical
-tvv <- tv - varmns
-tv - varmns
-##Difference from theoretical for 1000 observations
-tvthous <- tv - vared
-```
+When comparing both, the doseage of 1 mg/day looks like a more effective treatment
+due to the significance of the test.
 
-The result is a little further from theoretical, but still pretty close.  Figure two compares 
-the difference for variance between the Theoretical Variance, 1000, and 40 observation variances.
+### Conclussion and Assumptions
 
-```{r}
-set.seed(1234)
-fed = NULL
-for (i in 1 : 1000) fed <- c(fed, rexp(40, l))
-```
+After identifying potential significant treatments for tooth decay during our exploratory 
+analysis, we ran T-Tests on the data to confirm whether or not OJ is a better treatment than
+Ascorbic Acid, and which doseage was more effective.
 
-```{r, fig.cap = "Figure Two - Densities for 1000 observations and 40 observations for Exponential Distribution"}
-plot(c(tvv, tvthous), col = c("blue", "red"), pch = 15, main = "Plot of Variances", ylab = "Variance")
-legend("topright", legend = c("1000 Obs", "40 Obs"), fill = c("blue", "red"))
-```
+We can conclude that OJ does improve tooth growth in guinea pigs with a 95% significance
+level.
 
-### Distribution
+We can also conclude that OJ in a 1 mg/day doseage is the most significant treatment doseage.  
+Alternatively, we can say that increasing doseage to 2 mg/day reduces the effectiveness
+of OJ on tooth growth.
 
-The Central Limit Theorem (CLT) states that the distribution of averages of independent and
-identically distributed (iid) variables becomes that of a standard normal as sample size increases.
-
-The large distribution of random exponentials is depicted in Figure Three
-
-```{r fig.cap = "Figure Three - histogram of 1000 Random Exponentials"}
-hist(ed, col = "grey", main = "Histogram of 1000 Random Exponentials", ylab = "Frequency",
-     xlab = "Random Exponentials", breaks = 100, cex.main = 0.75)
-rug(ed)
-```
-
-Now look at the distribution of averages from 40 observed random expenetials simulated 1000 times
-in Figure Four.
-
-```{r fig.cap = "Figure Four - histogram of means of 40 observations simulated 1000 times"}
-hist(mns, col = "grey", main = "Histogram of means of 40 Random Exponentials Simulated 1000 Times", ylab = "Frequency",
-     xlab = "Observed Means", breaks = 100, cex.main = 0.5)
-rug(mns)
-```
-
-Now look at the same graph, except the observations were increased from 40 to 400, or by a factor of 10. 
-Figure Five depicts the distribution of averages from 400 observed random expenetials simulated 1000 times.
-
-```{r}
-set.seed(1234)
-mnsfh = NULL
-for (i in 1 : 1000) mnsfh <- c(mnsfh, mean(rexp(400, l)))
-```
-
-
-```{r fig.cap = "Figure Five - histogram of means of 400 observations simulated 1000 times"}
-hist(mnsfh, col = "grey", main = "Histogram of means of 400 Random Exponentials Simulated 1000 Times", ylab = "Frequency",
-     xlab = "Observed Means", breaks = 100, cex.main = 0.5)
-rug(mnsfh)
-```
-
-Figure Five shows that as sample size increases, the distribution becomes more normal.
+The test performed assume that the variances were not equal and that the data was normally 
+distributed.

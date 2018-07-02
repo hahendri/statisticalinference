@@ -19,12 +19,6 @@ Built with R version `r getRversion()` with the following system:
 Sys.info()
 ```
 
-
-```{r, echo = FALSE}
-mb <- system('wmic OS get TotalVisibleMemorySize /Value')
-mb
-```
-
 Load the required libraries
 
 ```{r}
@@ -95,10 +89,10 @@ print(meanmns)
 tm - meanmns
 ```
 
-The result is a little larger, but still pretty close.  Figure one displays the Eponential 
+The result is a little larger, but still pretty close.  Figure 1 displays the Eponential 
 Distribution and means.
 
-```{r, fig.cap = "Figure One - Theoretical, 1000 observations, and 40 observations Means for Exponential Distribution"}
+```{r, fig.cap = "Theoretical, 1000 observations, and 40 observations Means for Exponential Distribution"}
 hist(ed, breaks = 200, main = "Mean Comparisons", xlab = "Exponential Distribution Observation 
      Zoomed in Around Mean", xlim = 4.5:5.5)
 abline(v = tm, col = "black")
@@ -141,7 +135,7 @@ tv - varmns
 tvthous <- tv - vared
 ```
 
-The result is a little further from theoretical, but still pretty close.  Figure two compares 
+The result is a little further from theoretical, but still pretty close.  Figure 2 compares 
 the difference for variance between the Theoretical Variance, 1000, and 40 observation variances.
 
 ```{r}
@@ -150,7 +144,7 @@ fed = NULL
 for (i in 1 : 1000) fed <- c(fed, rexp(40, l))
 ```
 
-```{r, fig.cap = "Figure Two - Densities for 1000 observations and 40 observations for Exponential Distribution"}
+```{r, fig.cap = "Densities for 1000 observations and 40 observations for Exponential Distribution"}
 plot(c(tvv, tvthous), col = c("blue", "red"), pch = 15, main = "Plot of Variances", ylab = "Variance")
 legend("topright", legend = c("1000 Obs", "40 Obs"), fill = c("blue", "red"))
 ```
@@ -160,25 +154,25 @@ legend("topright", legend = c("1000 Obs", "40 Obs"), fill = c("blue", "red"))
 The Central Limit Theorem (CLT) states that the distribution of averages of independent and
 identically distributed (iid) variables becomes that of a standard normal as sample size increases.
 
-The large distribution of random exponentials is depicted in Figure Three
+The large distribution of random exponentials is depicted in Figure 3.
 
-```{r fig.cap = "Figure Three - histogram of 1000 Random Exponentials"}
+```{r fig.cap = "Histogram of 1000 Random Exponentials"}
 hist(ed, col = "grey", main = "Histogram of 1000 Random Exponentials", ylab = "Frequency",
      xlab = "Random Exponentials", breaks = 100, cex.main = 0.75)
 rug(ed)
 ```
 
 Now look at the distribution of averages from 40 observed random expenetials simulated 1000 times
-in Figure Four.
+in Figure 4.
 
-```{r fig.cap = "Figure Four - histogram of means of 40 observations simulated 1000 times"}
+```{r fig.cap = "Histogram of means of 40 observations simulated 1000 times"}
 hist(mns, col = "grey", main = "Histogram of means of 40 Random Exponentials Simulated 1000 Times", ylab = "Frequency",
      xlab = "Observed Means", breaks = 100, cex.main = 0.5)
 rug(mns)
 ```
 
 Now look at the same graph, except the observations were increased from 40 to 400, or by a factor of 10. 
-Figure Five depicts the distribution of averages from 400 observed random expenetials simulated 1000 times.
+Figure 5 depicts the distribution of averages from 400 observed random expenetials simulated 1000 times.
 
 ```{r}
 set.seed(1234)
@@ -187,10 +181,10 @@ for (i in 1 : 1000) mnsfh <- c(mnsfh, mean(rexp(400, l)))
 ```
 
 
-```{r fig.cap = "Figure Five - histogram of means of 400 observations simulated 1000 times"}
+```{r fig.cap = "Histogram of means of 400 observations simulated 1000 times"}
 hist(mnsfh, col = "grey", main = "Histogram of means of 400 Random Exponentials Simulated 1000 Times", ylab = "Frequency",
      xlab = "Observed Means", breaks = 100, cex.main = 0.5)
 rug(mnsfh)
 ```
 
-Figure Five shows that as sample size increases, the distribution becomes more normal.
+Figure 5 shows that as sample size increases, the distribution becomes more normal.
