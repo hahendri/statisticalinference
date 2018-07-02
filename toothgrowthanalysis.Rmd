@@ -55,8 +55,8 @@ doselen <- ggplot(dat, aes(x = interaction(supp, dose), y = len)) + geom_boxplot
 grid.arrange(supplen, doselen, ncol = 2)
 ```
 
-Figure 1 shows that Orange Juice may have increased tooth growth overall.  The 1mg/day doseage 
-shows a significant increase, which we will test.
+Figure 1 shows that Orange Juice may have increased tooth growth overall.  The 1mg/day 
+doseage shows a significant increase, which we will test.
 
 ### Test of overall effect of Orange Juice and Ascorbic Acid on Tooth Growth
 
@@ -67,7 +67,8 @@ We test the null hypothesis that VC and OJ have a difference in means of 0:
 datoj <- filter(dat, supp == "OJ")
 datvc <- filter(dat, supp == "VC")
 ##Run t-test
-t.test(datoj$len - datvc$len, mu = 0, paired = FALSE, alternative = "two.sided", conf.level = 0.95)
+t.test(datoj$len - datvc$len, mu = 0, paired = FALSE, alternative = "two.sided", 
+       conf.level = 0.95)
 ```
 
 The results of the test indicate that we must reject the null hyopothesis due to the 
@@ -88,7 +89,8 @@ datvcd1 <- filter(datvc, dose == 0.5)
 datvcd2 <- filter(datvc, dose == 1)
 datvcd3 <- filter(datvc, dose == 2)
 ##Run t.test on doseage of 2 mg/day
-t.test(datojd3$len - datvcd3$len, mu = 0, paired = FALSE, alternative = "two.sided", conf.level = 0.95)
+t.test(datojd3$len - datvcd3$len, mu = 0, paired = FALSE, alternative = "two.sided", 
+       conf.level = 0.95)
 ```
 
 This test indicates that there is not enough evidence to reject the null hypothesis, 
@@ -97,13 +99,15 @@ therefore the difference in means is 0.
 Test of doseage 0.5 mg/day:
 
 ```{r}
-t.test(datojd1$len - datvcd1$len, mu = 0, paired = FALSE, alternative = "two.sided", conf.level = 0.95)
+t.test(datojd1$len - datvcd1$len, mu = 0, paired = FALSE, alternative = "two.sided", 
+       conf.level = 0.95)
 ```
 
 Test of doseage 1 mg/day:
 
 ```{r}
-t.test(datojd2$len - datvcd2$len, mu = 0, paired = FALSE, alternative = "two.sided", conf.level = 0.95)
+t.test(datojd2$len - datvcd2$len, mu = 0, paired = FALSE, alternative = "two.sided", 
+       conf.level = 0.95)
 ```
 
 Both these test show that OJ significantly improved tooth growth.  The null hypothesis 
