@@ -1,5 +1,5 @@
 ---
-title: "Statistical Inference Simulation Exercise"
+title: "ToothGrowth Analysis"
 author: "Harland Hendricks"
 date: "June 27, 2018"
 output:
@@ -19,12 +19,6 @@ Built with R version `r getRversion()` with the following system:
 Sys.info()
 ```
 
-
-```{r, echo = FALSE}
-mb <- system('wmic OS get TotalVisibleMemorySize /Value')
-mb
-```
-
 Load the required libraries
 
 ```{r}
@@ -32,28 +26,22 @@ library(dplyr)
 library(ggplot2)
 ```
 
-## Comparing R's Exponential Distribution and the Central Limit Theorem
+## Analysis of ToothGrowth supp / dose
 
-### Simulation
+### Load the Data
 
-For our experiment we will use $${\lambda} = 0.2$$ and run 1000 simulations for the Exponential Distribution
-and store the results in an object named ed, this represents the Law of Large Numbers distribution
-that can demonstrate the Central Limit Theorem.
+Load the data into object named "dat"
 
 ```{r}
-set.seed(1234)
-n <- 1000
-l <- 0.2
-ed <- rexp(n, l)
+data("ToothGrowth")
+dat <- ToothGrowth
 ```
 
-We will also run 1000 simulations to sample the mean of 40 observation from the Exponential Distribution
-and store this result in the object named mns.
+Summary and Structure of dat
 
 ```{r}
-set.seed(1234)
-mns = NULL
-for (i in 1 : 1000) mns <- c(mns, mean(rexp(40, l)))
+summary(dat)
+str(dat)
 ```
 
 We will also run 1000 simulations to sample the variance of 40 observation from the Exponential Distribution
